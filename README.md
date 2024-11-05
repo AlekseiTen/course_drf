@@ -1,0 +1,1 @@
+1. Начало изучения DRF(ViewSet and Generic).
