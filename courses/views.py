@@ -7,12 +7,20 @@ from rest_framework.generics import (
 )
 from rest_framework.viewsets import ModelViewSet
 from courses.models import Course, Lesson
-from courses.serializers import CourseSerializer, LessonSerializer
+from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer
 
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
-    serializer_class = CourseSerializer
+
+    def get_serializer_class(self):
+        """Определяем, какой сериализатор использовать в зависимости от действия."""
+
+        #Если действие — это retrieve (то есть запрос на получение одного конкретного курса)
+        if self.action == "retrieve":
+            return CourseDetailSerializer
+
+        return CourseSerializer
 
 
 class LessonCreateApiView(CreateAPIView):
