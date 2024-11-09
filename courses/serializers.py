@@ -15,7 +15,7 @@ class CourseSerializer(ModelSerializer):
     lessons_count = SerializerMethodField()
 
     def get_lessons_count(self, course):
-        return
+        return course.lessons.count()
 
     class Meta:
         model = Course
