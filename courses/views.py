@@ -1,13 +1,11 @@
-from rest_framework.generics import (
-    CreateAPIView,
-    ListAPIView,
-    RetrieveAPIView,
-    UpdateAPIView,
-    DestroyAPIView,
-)
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView)
 from rest_framework.viewsets import ModelViewSet
+
 from courses.models import Course, Lesson
-from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer
+from courses.serializers import (CourseDetailSerializer, CourseSerializer,
+                                 LessonSerializer)
 
 
 class CourseViewSet(ModelViewSet):
@@ -16,7 +14,7 @@ class CourseViewSet(ModelViewSet):
     def get_serializer_class(self):
         """Определяем, какой сериализатор использовать в зависимости от действия."""
 
-        #Если действие — это retrieve (то есть запрос на получение одного конкретного курса)
+        # Если действие — это retrieve (то есть запрос на получение одного конкретного курса)
         if self.action == "retrieve":
             return CourseDetailSerializer
 
