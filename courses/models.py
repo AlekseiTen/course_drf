@@ -1,5 +1,6 @@
 from django.db import models
 
+
 NULLABLE = {"blank": True, "null": True}
 
 
@@ -14,6 +15,13 @@ class Course(models.Model):
     )
     description = models.TextField(
         verbose_name="Описание курса", **NULLABLE, help_text="Укажите описание курса"
+    )
+    owner = models.ForeignKey(
+        'users.User',
+        on_delete=models.SET_NULL,
+        **NULLABLE,
+        verbose_name="Владелец",
+        help_text="Укажите владельца курса"
     )
 
     def __str__(self):
@@ -38,6 +46,13 @@ class Lesson(models.Model):
         upload_to="lesson/previews/", verbose_name="Фото", **NULLABLE
     )
     video_url = models.URLField(verbose_name="Ссылка на видео", **NULLABLE)
+    owner = models.ForeignKey(
+        'users.User',
+        on_delete=models.SET_NULL,
+        **NULLABLE,
+        verbose_name="Владелец",
+        help_text="Укажите владельца урока"
+    )
 
     def __str__(self):
         return self.title
