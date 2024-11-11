@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
@@ -20,10 +21,24 @@ class CourseViewSet(ModelViewSet):
 
         return CourseSerializer
 
+    def perform_create(self, serializer):
+        """ Этот метод срабатывает, когда пользователь создает новый курс через API."""
+
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
+
 
 class LessonCreateApiView(CreateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+
+    def perform_create(self, serializer):
+        """ Этот метод срабатывает, когда пользователь создает новый урок через API."""
+
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
 
 
 class LessonListApiView(ListAPIView):
