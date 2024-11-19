@@ -93,21 +93,38 @@ class LessonDestroyApiView(DestroyAPIView):
 
 
 class SubscriptionView(APIView):
-    """Класс для проверки подписан ли пользователь на курс или нет"""
+    def post(self, request, course_id, *args, **kwargs):
+        user = request.user
 
-    def post(self, request, *args, **kwargs):
-        user = request.user  # Получаем текущего пользователя
-        course_id = request.data.get('course_id')  # Получаем ID курса из запроса
-        course_item = get_object_or_404(Course, id=course_id)  # Получаем объект курса или 404
+        course = get_object_or_404(Course, id=course_id)
+        subscription, created = Subscription.objects.get_or_create(
+            user=user, course=course
+        )
 
-        # Проверяем, есть ли уже подписка
-        subs_item = Subscription.objects.filter(user=user, course=course_item)
-
-        if subs_item.exists():
-            subs_item.delete()
-            message = 'Подписка удалена'
+        if created:
+            message = "подписка добавлена"
         else:
-            Subscription.objects.create(user=user, course=course_item)  # Создаем подписку
-            message = 'Подписка добавлена'
+            subscription.delete()
+            message = "подписка удалена"
 
         return Response({"message": message})
+
+# class SubscriptionView(APIView):
+#     """Класс для проверки подписан ли пользователь на курс или нет"""
+#
+#     def post(self, request, course_id, *args, **kwargs):
+#         user = request.user  # Получаем текущего пользователя
+#
+#         course_item = get_object_or_404(Course, id=course_id)  # Получаем объект курса или 404
+#
+#         # Проверяем, есть ли уже подписка
+#         subs_item = Subscription.objects.filter(user=user, course=course_item)
+#
+#         if subs_item.exists():
+#             subs_item.delete()
+#             message = 'Подписка удалена'
+#         else:
+#             Subscription.objects.create(user=user, course=course_item)  # Создаем подписку
+#             message = 'Подписка добавлена'
+#
+#         return Response({"message": message})
