@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.generics import (
     CreateAPIView,
     DestroyAPIView,
@@ -6,9 +7,11 @@ from rest_framework.generics import (
     UpdateAPIView,
 )
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from courses.models import Course, Lesson
+from courses.models import Course, Lesson, Subscription
 from courses.paginators import MyPaginator
 from courses.serializers import (
     CourseDetailSerializer,
@@ -87,3 +90,24 @@ class LessonDestroyApiView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = (IsAuthenticated, IsOwner | ~IsModer)
+
+
+class SubscriptionView(APIView):
+    """Класс для проверки подписан ли пользователь на курс или нет"""
+
+    def post(self, request, *args, **kwargs):
+        user = request.user  # Получаем текущего пользователя
+        course_id = request.data.get('course_id')  # Получаем ID курса из запроса
+        course_item = get_object_or_404(Course, id=course_id)  # Получаем объект курса или 404
+
+        # Проверяем, есть ли уже подписка
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
+
+        if subs_item.exists():
+            subs_item.delete()
+            message = 'Подписка удалена'
+        else:
+            Subscription.objects.create(user=user, course=course_item)  # Создаем подписку
+            message = 'Подписка добавлена'
+
+        return Response({"message": message})
