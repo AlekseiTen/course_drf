@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404
+
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from courses.models import Course, Lesson
+from courses.paginators import MyPaginator
 from courses.serializers import (CourseDetailSerializer, CourseSerializer,
                                  LessonSerializer)
 from users.permissions import IsModer, IsOwner
@@ -13,6 +14,7 @@ from users.permissions import IsModer, IsOwner
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
+    pagination_class = MyPaginator
 
     def get_serializer_class(self):
         """Определяем, какой сериализатор использовать в зависимости от действия."""
@@ -60,6 +62,7 @@ class LessonCreateApiView(CreateAPIView):
 class LessonListApiView(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = MyPaginator
 
 
 class LessonRetrieveApiView(RetrieveAPIView):
