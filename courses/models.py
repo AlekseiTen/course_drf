@@ -16,7 +16,7 @@ class Course(models.Model):
         verbose_name="Описание курса", **NULLABLE, help_text="Укажите описание курса"
     )
     owner = models.ForeignKey(
-        'users.User',
+        "users.User",
         on_delete=models.SET_NULL,
         **NULLABLE,
         verbose_name="Владелец",
@@ -46,7 +46,7 @@ class Lesson(models.Model):
     )
     video_url = models.URLField(verbose_name="Ссылка на видео", **NULLABLE)
     owner = models.ForeignKey(
-        'users.User',
+        "users.User",
         on_delete=models.SET_NULL,
         **NULLABLE,
         verbose_name="Владелец",
@@ -62,8 +62,8 @@ class Lesson(models.Model):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('user', 'course')
+        unique_together = ("user", "course")

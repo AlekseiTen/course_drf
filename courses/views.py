@@ -1,14 +1,20 @@
-
-from rest_framework.generics import (CreateAPIView, DestroyAPIView,
-                                     ListAPIView, RetrieveAPIView,
-                                     UpdateAPIView)
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from courses.models import Course, Lesson
 from courses.paginators import MyPaginator
-from courses.serializers import (CourseDetailSerializer, CourseSerializer,
-                                 LessonSerializer)
+from courses.serializers import (
+    CourseDetailSerializer,
+    CourseSerializer,
+    LessonSerializer,
+)
 from users.permissions import IsModer, IsOwner
 
 
@@ -26,15 +32,15 @@ class CourseViewSet(ModelViewSet):
         return CourseSerializer
 
     def perform_create(self, serializer):
-        """ Этот метод срабатывает, когда пользователь создает новый курс через API."""
+        """Этот метод срабатывает, когда пользователь создает новый курс через API."""
 
         course = serializer.save()
         course.owner = self.request.user
         course.save()
 
     def get_permissions(self):
-        """ метод для проверки является ли пользов.(модератором, собственником, просто пользов.),
-         и в зависимости от этого разрешаем или нет , те или иные действия"""
+        """метод для проверки является ли пользов.(модератором, собственником, просто пользов.),
+        и в зависимости от этого разрешаем или нет , те или иные действия"""
 
         if self.action == "create":
             self.permission_classes = (~IsModer,)  # "~" означает не модератор
@@ -52,7 +58,7 @@ class LessonCreateApiView(CreateAPIView):
     permission_classes = [IsAuthenticated, ~IsModer]
 
     def perform_create(self, serializer):
-        """ Этот метод срабатывает, когда пользователь создает новый урок через API."""
+        """Этот метод срабатывает, когда пользователь создает новый урок через API."""
 
         course = serializer.save()
         course.owner = self.request.user
