@@ -95,3 +95,48 @@ class LessonTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(data, result)
+
+
+class SubscriptionTestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(email="admin@lobster.ru")
+        self.course = Course.objects.create(
+            title="awgawfawefweaf", description="sefgaesfawe"
+        )
+        self.client.force_authenticate(user=self.user)
+
+    def test_subscription_post(self):
+        """Тест подписки на курс."""
+        url = reverse("courses:subscribe_view", args=(self.course.pk,))
+        data = {"user": self.user.pk, "course_id": self.course.pk}
+
+        self.assertTrue(Course.objects.filter(pk=self.course.pk).exists())
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.get("message"), "Подписка добавлена")
+
+    def test_unsubscription_post(self):
+        """Тест отписки от курса."""
+
+        # Сначала добавляем подписку (если это необходимо)
+        url = reverse("courses:subscribe_view", args=(self.course.pk,))
+        data = {"user": self.user.pk, "course_id": self.course.pk}
+        self.client.post(url, data)  # Добавление подписки
+
+        # Теперь тестируем отписку
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data.get("message"), "Подписка удалена")
+
+    def test_subscription_non_existent_course(self):
+        """Тест подписки на несуществующий курс."""
+        url = reverse("courses:subscribe_view", args=(123123,))
+        data = {"user": self.user.pk, "course_id": 123123}
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.data.get("detail"),
+            "No Course matches the given query.",
+        )
