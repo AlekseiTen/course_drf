@@ -21,13 +21,6 @@ class UserCreateAPIView(CreateAPIView):
         user.save()
 
 
-class PaymentViewSet(viewsets.ModelViewSet):
-    """позволяет автоматически реализовать стандартные методы CRUD для модели Payment"""
-
-    queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
-
-
 class PaymentListView(ListCreateAPIView):
     """позволяет реализовать методы только для получения списка объектов и создания новых объектов"""
 
@@ -35,3 +28,24 @@ class PaymentListView(ListCreateAPIView):
     serializer_class = PaymentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = PaymentFilter
+
+
+class PaymentCreateAPIView(CreateAPIView):
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+
+    def perform_create(self, serializer):
+        pass
+        # course_id = self.kwargs.get('course_id')
+        # course = Course.objects.get(id=course_id)
+        # payment = serializer.save(user=self.request.user, paid_course=course)
+
+        # try:
+        #     course_name = course.title
+        #     session_id, payment_link = create_session(payment.payment_amount, f'к оплате {course_name}')
+        #     payment.session_id = session_id
+        #     payment.payment_link = payment_link
+        #     payment.save()
+        # except stripe.error.StripeError as e:
+        #     print(f"Ошибка при создании сессии Stripe: {e}")
+        #     raise

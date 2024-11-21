@@ -16,6 +16,8 @@ class PaymentSerializer(ModelSerializer):
             "separately_paid_lesson",
             "payment_amount",
             "payment_method",
+            "payment_link",
+            "session_id",
         ]
 
 
