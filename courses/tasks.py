@@ -18,7 +18,7 @@ def send_info(course_id, recipients, message):
 
 @shared_task
 def deactivate_user():
-    """Деактивирует пользователей, которые не входили в систему более 30 дней"""
+    """Деактивирует пользователей, которые не входили в систему более 30 дней."""
     today = timezone.now().date()
     for user in User.objects.all():
         if user.last_login and user.last_login.date() + timedelta(days=30) < today:
