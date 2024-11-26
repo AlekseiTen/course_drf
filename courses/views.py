@@ -19,6 +19,7 @@ from courses.serializers import (
     LessonSerializer,
 )
 from users.permissions import IsModer, IsOwner
+from courses.tasks import send_info
 
 
 class CourseViewSet(ModelViewSet):
@@ -53,6 +54,16 @@ class CourseViewSet(ModelViewSet):
             self.permission_classes = (~IsModer | IsOwner,)
 
         return super().get_permissions()
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+
+        emails = []
+        subscriptions = Subscription.objects.filter(course=course)
+        for s in subscriptions:
+            emails.append(s.user.email)
+
+        send_info.delay(course.id, emails, f'Изменен курс {course.title}')
 
 
 class LessonCreateApiView(CreateAPIView):
