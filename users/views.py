@@ -34,12 +34,8 @@ class PaymentListView(ListCreateAPIView):
     def perform_create(self, serializer):
         # Извлекаем course_id из тела url запроса
         course_id = self.kwargs.get('course_id')
-
-        # course_id = self.request.data.get('course_id') # Извлекаем course_id из тела запроса
-
         # Получаем объект курса по ID
         course = Course.objects.get(id=course_id)
-
         # Сохраняем платеж с указанием пользователя и оплаченного курса
         payment = serializer.save(user=self.request.user, paid_course=course)
 
